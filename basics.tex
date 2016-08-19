@@ -1,0 +1,366 @@
+%%
+%% basics.tex
+%%
+\chapter{First Steps with PROFETA}
+%%
+In this Chapter we will start to familiarize with PROFETA.
+%%
+We will initially understand the principles of the model behind PROFETA, the
+\emph{Belief-Desire-Intention}, and subsequently we'll begin to use the
+tool, first by learning how to install it and then by trying to implement
+few simple examples.
+%%
+This will help us to understand, step-by-step, the syntax and semantics of
+the PROFETA language which will be then deeply explained in the other
+Chapters.
+%%
+Since PROFETA is written in Python, a quite good knowledge of the language
+is mandatory to better understand what is described in this book.
+%%
+
+%%
+In this Chapter, we consider the use of Linux and Bash; this applies also
+to MacOs, but if you
+have a different operating system (e.g.~Windows), you need to properly
+adapt the commands to your environment, however source codes remain the
+same.
+%%
+In showing the examples, in the snapshots of shell windows, we will use
+\underline{underlining} to indicate a command that has to be typed by the
+user.
+%%
+
+%%
+
+
+%%
+\section{PROFETA Phylosophy: Belief-Desire-Intention}
+%%
+PROFETA is a tool designed to write autonomous systems (\emph{agents} or
+\emph{robots}) exploiting on an
+agent-based paradigm called
+\emph{Belief-Desire-Intention (BDI)}~\cite{rao1995bdi} and inspired to a
+kernel language called AgentSpeak(L)~\cite{AgentSpeak}.
+%%
+The BDI paradigm is an extension of PRS\footnote{Practical Reasoning
+  Systems~\cite{PRSarchitecture}}, based on some principles that aim at
+mimicking human thinking.
+%%
+As the name suggests, it considers three main entities \emph{Beliefs},
+\emph{Desires} and \emph{Intentions}.
+%%
+
+%%
+\textbf{\emph{Beliefs}} (also called \emph{facts} in the AI world)
+represent the
+\emph{knowledge} of the autonomous system and
+are used to reflect both the state of the environment and the additional
+knowledge eventually derived by the system.
+%%
+
+%%
+\textbf{\emph{Desires}} represent the motivational state of the system or,
+in other words, the ``things to do'' to achieve its \emph{goals}.
+%%
+Desires are expressed as \emph{plans} (i.e.~once again
+``things to do'') which can be selected for execution following the
+occurrence of certain
+events in the environment and provided that the system has a specific
+knowledge.
+%%
+From the computer programming point of view, plans of a BDI system
+represents the \emph{program} to be executed.
+%%
+
+%%
+While desires are the overall plans that make it possible the achievement
+of goals, \textbf{\emph{Intentions}} represent the \emph{plans selected for
+execution}, at a certain time instant, to face a certain situation.
+%%
+Intentions are indeed considered as \emph{run-time instantiation} of plans.
+%%
+
+%%
+BDI systems are usually controlled by a virtual machine executing a loop
+which performs the following operations:
+%%
+\begin{itemize}
+%%
+\item Sample the environment and update the knowledge base with the new
+  \emph{beliefs}
+%%
+\item Identify the \emph{plans} (\emph{desires})
+  that, on the basis of the current system status, can be selected for
+  execution
+%%
+\item Selected plans become \emph{intentions} and they can be scheduled for
+  execution
+%%
+\item Intentions are finally executed
+%%
+\end{itemize}
+%%
+
+
+%%
+\section{PROFETA Installation}
+%%
+The PROFETA tool is entirely written in Python\footnote{PROFETA does not
+  support Python3}  and thus depends only on it,
+no additional package or library is needed.
+%%
+It can be downloaded from \texttt{github} using the
+\texttt{git clone} command.
+%%
+To this aim, the git tool must be installed in your system.
+%%
+
+%%
+After typing:
+%%
+\shellsnap{\$ \underline{git clone http://github.com/corradosantoro/profeta}}
+%%
+a folder \texttt{profeta} will appear in your current directory.
+%%
+In order to install the tool just type:
+%%
+\shellsnap{%%
+\$ \underline{cd profeta}\\
+\$ \underline{sudo python setup.py install}}
+%%
+If no errors occur (the system will ask you for the super-user password)
+the PROFETA tool will be installed in your system.
+%%
+%%
+You can now test your installation by running the \texttt{factorial} sample
+program:
+\shellsnap{%%
+\$ \underline{cd samples}\\
+\$ \underline{python factorial.py}\\
+Enter +fact(N) to calculate the factorial of N\\
+PROFETA>}
+%%
+The prompt which will be displayed is the \emph{PROFETA shell}, that
+provides some commands to manipulate the knowledge base, to execute a
+goal, etc.
+%%
+The details of its usage will be given in Chapter~\ref{xxxx}.
+%%
+To test sample program, just type \texttt{+fact(10)} and the system will
+give the answer by
+printing the factorial of 10:
+%%
+\shellsnap{%%
+PROFETA>\underline{+fact(10)}\\
+PROFETA>the resulting factorial is 3628800}
+%%
+Type \texttt{quit} to return to the system shell.
+%%
+
+
+%%
+\section{``Hello World'' from PROFETA}
+%%
+As it happens when you start to learn any other programming language, also
+for PROFETA the first example we provide is the classical ``Hello world''.
+%%
+What we intend to do is a reactive program that prints the string
+\texttt{'Hello world' from PROFETA} as soon as a specified belief is
+asserted in the knowledge base.
+%%
+The source code of this program is reported in
+Figure~\ref{fig:hello} and explained in the following.
+%%
+
+%%
+\begin{figure}[b!]
+\python%%
+\begin{lstlisting}
+from profeta.lib  import *
+from profeta.main import *
+
+# a "say" belief
+class say(Belief): pass
+
+PROFETA.start()  # instantiate the engine
+
+# define a rule: when you say "hi", PROFETA answers "hello world"
++say("hi") >> [ show_line("'Hello world' from PROFETA") ]
+
+PROFETA.run_shell(globals())
+\end{lstlisting}
+\caption{``Hello word'' in PROFETA}\label{fig:hello}
+\end{figure}
+%%
+%%
+
+
+%%
+Lines 1--2 report the basic PROFETA library imports: use them in any
+PROFETA-based program.
+%%
+Line 5 is the \textbf{declaration of a belief}; like in a programming
+language, like C/C++ or Java, you need to declare your variables with types, also in
+PROFETA you are asked to declare your beliefs (and also the other entities
+then you will use).
+%%
+Belief declaration is done by simply \emph{subclassing} the basic
+\texttt{Belief} class.
+%%
+%%
+Line 7 starts the PROFETA engine; this statement is needed before
+the PROFETA program appears.
+%%
+%%
+Line 10 reports the ``real'' PROFETA program: in particular, the line
+expresses that ``when the belief \texttt{say("hi")} is asserted, the
+message \texttt{'Hello world' from PROFETA} is printed on the console.
+%%
+
+%%
+Line 10 is a \textbf{reactive plan}: \texttt{say("hi")} is a \emph{belief
+  pattern}, while the symbol ``\texttt{+}'' completes the pattern by
+specifying ``addition'', that is, belief assertion.
+%%
+Symbol ``\verb+>>+'' plays the role of ``implies'' and its right-hand side
+is a \emph{list of actions} to be executed following that assertion; in our
+case, the list is composed of a single (library) action which is the output
+a message.
+%%
+%%
+Finally, line 12 starts the PROFETA Shell so that we can manually trigger
+the defined plan by using the shell commands.
+%%
+
+%%
+In order to test the ``Hello world'' program, we can just type the commands
+displayed in the window below:
+%%
+\shellsnap{%%
+\$ \underline{python hello\_world.py}\\
+PROFETA>\underline{+say("hi")}\\
+PROFETA>'Hello world' from PROFETA\\
+\underline{quit}\\
+\$
+}
+%%
+
+
+%%
+\section{Playing with Beliefs and the Knowledge Base}
+%%
+In the previous Section, we used the shell command \texttt{+say("hi")} to
+trigger a plan.
+%%
+Indeed, plan triggering is a \emph{secondary effect} of that command since
+basically it \textbf{adds} belief \texttt{say("hi")} to the knowledge base;
+this effect can be observed by using the shell command \texttt{kb} which
+prints out the content of the knowledge base:
+%%
+\shellsnap{%%
+\$ \underline{python hello\_world.py}\\
+PROFETA>\underline{+say("hi")}\\
+PROFETA>'Hello world' from PROFETA\\
+\underline{kb}\\
+{[say('hi')]}\\
+PROFETA>}
+%%
+
+%%
+Now try to assert some other beliefs, e.g.~\texttt{say("hello")},
+\texttt{say("ciao")}, \texttt{say("bonjour")} and inspect once again the
+content of the knowledge base. You now will see the KB populated by the
+beliefs you've asserted, but, since none of that beliefs correspond to the
+pattern of the plan we defined in the running program, that plan will be
+never triggered:
+%%
+\shellsnap{%%
+PROFETA>\underline{+say("hello")}\\
+PROFETA>\underline{+say("ciao")}\\
+PROFETA>\underline{+say("bonjour")}\\
+PROFETA>\underline{kb}\\
+{[say('hi'), say('hello'), say('ciao'), say('bonjour')]}\\
+PROFETA>}
+%%
+
+%%
+You can now try to assert again belief \texttt{say("hi")} and see what
+happens:
+%%
+\shellsnap{%%
+...\\
+PROFETA>\underline{kb}\\
+{[say('hi'), say('hello'), say('ciao'), say('bonjour')]}\\
+PROFETA>\underline{+say("hi")}\\
+PROFETA>}
+%%
+
+%%
+Indeed \emph{nothing happens!} This is quite normal and in accordance with
+beliefs semantics because re-asserting a yet existing belief does not
+provoke any change in the knowledge base and thus no related event is
+generated.
+%%
+But if you want to restart the plan, you can \textbf{remove} the belief by
+using the command \texttt{-say("hi")}, and assert it again:
+%%
+\shellsnap{%%
+...\\
+PROFETA>\underline{-say("hi")}\\
+PROFETA>\underline{kb}\\
+{[say('hello'), say('ciao'), say('bonjour')]}\\
+PROFETA>\underline{+say("hi")}\\
+PROFETA>'Hello world' from PROFETA\\
+\underline{kb}\\
+{[say('hello'), say('ciao'), say('bonjour'), say('hi')]}\\
+PROFETA>}
+%%
+
+%%
+\section{Belief Syntax and Semantics}
+%%
+After having practically seen how beliefs are handled and when then can
+generate events, let's make a complete discussion about their syntax and
+semantics.
+%%
+
+%%
+A \textbf{belief} $B$ in PROFETA is characterised by a \emph{predicate}
+(i.e.~the belief name) and zero or more parameters.
+%%
+It is declared as a Python class that simply extends the basic library
+class \texttt{Belief} and is referred as classical logic \emph{atomic
+  formula} with zero or more \emph{ground terms}, i.e.~$B(t_1, \dots, t_n)$
+with $n \ge 0$ and $t_1, \dots, t_n$ as constants.
+%%
+
+%%
+\emph{Asserting} a belief $B(t_1, \dots, t_n)$ implies to add it to the
+knowledge base of your PROFETA program, given that \emph{the same belief
+  with the same parameters} does not yet exist in the KB, otherwise
+adding is not performed\footnote{There are two exceptions to this rule
+  which apply when different kind of beliefs are used, that are
+  \texttt{SingletonBelief}s and \texttt{Reactor}s; their role and semantics
+  will be described in Chapter~\ref{yyy}.}.
+%%
+From the reasoning perspective, this operation represents the case in which
+the agent \emph{knows} the fact (i.e.~thinks that the fact is
+\textbf{true}) that is
+represented by that belief.
+%%
+Assert operation (when succeeds) also generate an \emph{adding event} that
+can be caught by a plan in order to execute some computations.
+%%
+
+%%
+Similarly, \emph{retracting} a belief  $B(t_1, \dots, t_n)$ implies to
+remove it from the
+knowledge base of your PROFETA program, given that the same belief
+(with the same parameters) \emph{already exists} (in the KB), otherwise
+removal cannot be performed.
+%%
+Also retract operation, when it succeeds, generates a relevant event
+(\emph{delete event}) that can be used to trigger a plan, as it will be
+shown in the examples reported in the next Sections.
+%%
+

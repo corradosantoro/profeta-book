@@ -1,0 +1,218 @@
+%%
+%% preface.tex
+%%
+\chapter{Preface}
+%%
+{\raggedleft{}\em%%
+``That the sperm of a man be putrefied by itself in a sealed cucurbit for\\
+forty days with the highest degree of putrefaction in a horse's womb, or at\\
+least so long that it comes to life and moves itself, and stirs, which is
+easily observed.\\
+%%
+After this time, it will look somewhat like a man, but
+transparent, without a body.\\
+If it be fed wisely with
+human blood, and be nourished for up to forty weeks,\\
+and be kept
+in the even heat of the horse's womb, a living human child grows therefrom,\\
+with all its members like another child, which is born of a woman, but much
+smaller''\\
+Paracelsus---De Natura Rerum~\cite{homunculus}\\}
+%%
+%%
+\section{The Dream of the ``Golem'':\\from Alchimists to Computer Scientists}
+%%
+Creating \emph{artificial autonomous systems} is something that men have
+always tried to do.
+%%
+According to the hebrew tradition, the knowledge of the \emph{Quabbalah}
+allows a human to create, from the clay, a giant that is strong and
+submissive, and able to perform hard works (like a slave) on behalf of its
+creator.
+%%
+Indeed, from the impossible recipes of the alchimist \emph{Paracelsus} to create
+the \emph{homunculus}~\cite{homunculus}, till the \emph{mechanical toys} of
+'700 and '800, like the three automata of Pierre Jaquet Droz (the
+\emph{musicist}, the \emph{drawer} and the
+\emph{writer})~\cite{jaquet-droz}, or the
+mechanical ``duck'' of Jacques De
+Vaucanson\footnote{Jacques De Vaucanson~\cite{de-vaucaunson} was famous for
+  the invention of the
+  first automatic loom which is also considered as the first programmable
+  machine},
+one of the main
+dreams of people and
+scientists has been the creation of artificial life, with a particular
+focus on ``systems that can think''.
+%%
+Such an aspect has been particularly stressed when computer systems
+appeared, first by making some theoretical assumptions (as in the Turing
+Test), and then by concretely trying to emulate certain aspects as in the
+\emph{Artificial Intelligence Era}.
+%%
+But despite of claims or expectations, till nowadays we could not
+implement an
+artificial system that is able to ``think like a human''; instead, we are able
+to emulate certain specific mechanisms of human life~\cite{RusselNorvig}:
+expert systems can emulate reasoning (to a certain extent), artificial neural
+networks are able to learn
+processes or patterns, and genetic algorithms can find ``optimal
+solutions'' to mathematical problems by using the same principles of the
+natural selection.
+%%
+
+%%
+To support the cited (and other AI) techniques, computer scientists
+concentrated not only on the basic mechanism to be emulated in an algorithm
+but also on the opportunity to use or introduce \emph{programming
+  languages} that provide constructs and semantics better fitting the
+implementation of the problem to be solved.
+%%
+This is the reason why programming languages like Prolog, LISP or Scheme
+appeared: they present features that are not available in classical
+imperative approaches, thus making easier the development of ``intelligent
+systems''.
+%%
+
+%%
+Among these alternative languages, in the particular applications in which
+a certain form of ``reasoning''
+is required, \emph{logic/declarative approaches} clearly proved their
+validity.
+%%
+They are based on a model strongly exploiting the concept of
+\emph{knowledge} which can come from both some pre-constituted \emph{facts}
+(initial knowledge)
+and some \emph{inference rules} that are able to \textbf{derive new
+knowledge}.
+%%
+In these approaches, the semantics of the inference rules depends on the
+specific reasoning model adopted, which ranges from simple
+\emph{first-order logic} predicates, to \emph{enhanced first-order logic}
+(or higher-order logics), \emph{fuzzy logic}, \emph{temporal logic}, etc.
+%%
+%%
+
+
+%%
+\section{Situated AI systems: Agents}
+%%
+As an evolution of AI systems, the '90s have seen the birth of special kind
+of autonomous computer systems: \emph{agents}~\cite{bradshaw};
+they are basically pieces of software able to act autonomously, that live in
+a specific environment (virtual of physical), and with the task of
+achieving a specific goal without any external (human) intervention.
+%%
+With respect to traditional AI systems, agents include the characteristic of
+\emph{``situatedness''}, i.e.~their operations are strongly tied to the
+environment in which they live and, for this reason, they must be able to
+perform proper interactions with such an environment.
+%%
+On this basis, agents stress the aspect of \emph{interaction} with both the
+environment and other agents (as in the case of \emph{multi-agent
+  systems}~\cite{weiss}): software architectures, languages and frameworks
+currently available for agent-based systems strongly take into account such
+an aspect, sometimes giving a higher importance with respect to the
+intelligence, but in any case letting interaction to play a fundamental
+role.
+%%
+This change in focus, together with the widespread diffusion that the
+Java\texttrademark{}
+language had since '90s, increased the development of agent-based
+software and platforms that use this language.
+%%
+However, while Java\texttrademark{}, being imperative and object-oriented
+in its nature,
+could be adequate for interaction or to program an autonomous behaviour (as
+in the case of the well-known platform JADE~\cite{jade-book}), it is not
+suitable to implement a form of reasoning but additional external tools
+must be integrated~\cite{jess,drools,jasonbook}.
+%%
+
+
+%%
+\section{Physical Agents: the Robots}
+%%
+While agents are software entities often living in a virtual environment,
+there is a more interesting category of autonomous systems characterized by
+a ``physical nature'': \emph{robots} are ``real creatures'' that live in
+the real physical world sharing with humans all the aspects of the
+environment in which all of them live.
+%%
+Programming \emph{autonomous robots} is more, more and more challenging
+than programming agents, since the interaction with the environment poses
+problems that are not present in agent-based applications.
+%%
+Indeed, the most important difference relies on the fact that a physical
+environment is \emph{strongly unpredictable}, meaning that the probability
+that an action made by the robot \emph{fails} is extremely high; and a
+failure, if not properly handled, implies the impossibility to achieve the
+goal for which the robot has been designed.
+%%
+Managing
+unpredictability and failures means, at first sight, the ability to
+detect---in any possible state---the events in the environment that could
+impede the execution of a certain action, and, secondly, the ability of
+find possible alternative strategies---if any---to try to reach that goal.
+%%
+These considerations, from the programming language/approach perspective, imply
+\emph{(i)} that the reasoning aspect must be tightly mingled with the way in which
+the environment is sensed and \emph{(ii)} that \emph{all possible events} must be
+always sensed (the robot must never be ``blind'') and properly handled in
+any possible situation.
+%%
+
+
+%%
+\section{... and that's why PROFETA}
+%%
+All of the said principles and characteristics have been analyzed and
+taken into account in the implementation of some autonomous robots in the
+ARSLAB of the University of Catania.
+%%
+As a result, the PROFETA tool has been designed with the objective of
+facing all the said aspect in a flexible way for a programmer.
+%%
+The name stands for \emph{Python RObotic Framework for
+  dEsigning sTrAtegies} and is a Python-based tool composed of the
+following parts:
+%%
+\begin{itemize}
+%%
+\item A \textbf{knowledge system}, to let a programmer representing the
+  robot's knowledge by means of some \emph{facts} (which indeed are called
+  \emph{beliefs}), properly stored and managed through a \emph{knowledge
+    base}.
+%%
+\item A set of \textbf{sensor} and \textbf{action} classes, provided as
+  \emph{artifacts} to perform the interaction with the environment.
+%%
+\item A \textbf{declarative language} that allows a programmer to express the
+  robot behaviour by means a rational approach, also exploiting beliefs in
+  order to perform a---more or less flexible---form of reasoning.
+%%
+\end{itemize}
+%%
+This book describes PROFETA, by presenting its underlying model, the basic
+characteristics and the way in which it can be used to write
+the behaviour of a robot.
+%%
+The approach we use in the whole book is mainly practical, all the features
+will be presented by providing several examples in order to let the reader
+to fully understand the explained characteristic.
+%%
+
+
+%%
+\section{Acknowledgements}
+%%
+And before starting to deal with all the details of PROFETA, it is
+mandatory to thank all the people that, in several forms, contributed to
+the development of PROFETA with both concrete help (implementation of
+parts) and advices or debugging.
+%%
+They are: Loris Fichera, Daniele Marletta, Vincenzo (Enzo) Nicosia,
+Andrea ``Mancausoft'' Milazzo, Carlo Battiato, Riccardo Massari, Fabrizio
+Messina, Giuseppe Pappalardo.
+%%
+
