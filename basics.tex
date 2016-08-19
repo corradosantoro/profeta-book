@@ -179,7 +179,7 @@ Figure~\ref{fig:hello} and explained in the following.
 from profeta.lib  import *
 from profeta.main import *
 
-# a "say" belief
+# declaration of "say" belief
 class say(Belief): pass
 
 PROFETA.start()  # instantiate the engine
@@ -189,7 +189,7 @@ PROFETA.start()  # instantiate the engine
 
 PROFETA.run_shell(globals())
 \end{lstlisting}
-\caption{``Hello word'' in PROFETA}\label{fig:hello}
+\caption{``Hello world'' in PROFETA}\label{fig:hello}
 \end{figure}
 %%
 %%
@@ -364,3 +364,68 @@ Also retract operation, when it succeeds, generates a relevant event
 shown in the examples reported in the next Sections.
 %%
 
+
+%%
+\section{Using Variables}
+%%
+Let us imagine that we want to generalise the \texttt{hello\_world} program
+by handling any type of message, rather than only \texttt{"hi"}.
+%%
+We can modify the program as reported in Figure~\ref{fig:hello_gen},
+call it simply \texttt{hello.py}, and run it as follows:
+%%
+\shellsnap{%
+\$ \underline{python hello.py}\\
+PROFETA>\underline{+say("ciao")}\\
+PROFETA>you said ciao and I say 'Hello world' from PROFETA\\
+\underline{+say("hello")}\\
+PROFETA>you said hello and I say 'Hello world' from PROFETA\\
+\underline{+say("hi")}\\
+PROFETA>you said hi and I say 'Hello world' from PROFETA\\
+\underline{kb}\\
+{[say('ciao'), say('hello'), say('hi')]}\\
+PROFETA>}
+%%
+
+%%
+\begin{figure}[b!]
+\python%%
+\begin{lstlisting}
+from profeta.lib  import *
+from profeta.main import *
+
+# declaration of "say" belief
+class say(Belief): pass
+
+PROFETA.start()  # instantiate the engine
+
++say("X") >> [ show_line("you said","X",
+                         "and I say 'Hello world' from PROFETA") ]
+
+PROFETA.run_shell(globals())
+\end{lstlisting}
+\caption{Generalised ``Hello world'' in PROFETA}\label{fig:hello_gen}
+\end{figure}
+%%
+%%
+
+%%
+The difference of this program, with respect to the \texttt{hello\_world}
+is that now \emph{any parameter} given when asserting belief \texttt{say()}
+is able to trigger the plan; moreover, that parameter is also printed in the
+message shown by the plan itself.
+%%
+This is achieved by using a \emph{free variable}, \texttt{X}, which is
+bound to the value present in belief assertion and then used also in the
+printed message.
+%%
+The example shows how to use variables in PROFETA plans: as in a typical
+Prolog style, \emph{any string parameter starting with an uppercase letter}
+is treated as \emph{variable} and used according to the styles of logic
+programming.
+%%
+Scope of variables is per-plan, meaning that \emph{(i)} a variable exists
+only for the
+duration of plan execution and  \emph{(ii)}  two variables having the same
+name, but used in different plans, are \emph{different} as well.
+%%
