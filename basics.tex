@@ -429,3 +429,161 @@ only for the
 duration of plan execution and  \emph{(ii)}  two variables having the same
 name, but used in different plans, are \emph{different} as well.
 %%
+
+
+%%
+\section{Adding Conditions}
+%%
+PROFETA plans are triggered by events that, according to what we have seen
+till now, can be the assertion or retracting of a belief, also with specific
+patterns in the parameters.
+%%
+In order to allow a better flexibility, plans can also include a
+\textbf{condition}, represented by a logic predicate that, if true, make it
+possible the execution of the plan itself.
+%%
+Therefore, in this case, not only the triggering event must
+occur but also the condition part must be true.
+%%
+The condition allows a programmer to ensure that certain
+beliefs  (also with given parameters) are present in the knowledge base and
+that the (bound) variables used in the plan have specific values.
+%%
+As in Prolog clause, variables used in the event and in the condition are
+\emph{unified}.
+%%
+From the syntactical point of view, the condition is expressed using the
+\emph{``/''} operator placed immediately after the event.
+%%
+The following example will make condition syntax and semantics more clear.
+%%
+
+%%
+Let us suppose we want to represent a classroom of students that, at a
+certain time, take the university degree.
+%%
+We use the belief \texttt{student(X)} to state that \texttt{X} is a student
+and  \texttt{graduated(X)} to state that \texttt{X} is now graduated.
+%%
+Obviously, these two beliefs obey to two main constraint:
+%%
+\begin{description}
+%%
+\item[{[C1]}] They are mutually exclusive, that is, a person is either a student or
+  a graduated;
+%%
+\item[{[C2]}] Before being graduated, a person must have been a student;
+%%
+\item[{[C3]}] A graduated person cannot become again a student\footnote{Unless a
+  different faculty is chosen, but we don't consider here such a case.}.
+%%
+\end{description}
+%%
+
+%%
+These constraints can be expressed as proper plans to be triggered by the
+assertion of those beliefs.
+%%
+In particular:
+%%
+\begin{description}
+%%
+\item[{[P1]}] When belief \texttt{graduated(X)} is asserted and \texttt{student(X)}
+  is also present in the KB, the second belief must be removed (indicating
+  that \texttt{X} became graduated, constraints \textbf{C1} and
+  \textbf{C2}).
+%%
+\item[{[P2]}] When belief \texttt{graduated(X)} is asserted and \texttt{student(X)}
+  is \textbf{not present} in the KB, the first belief must be removed (it's
+  a violation of constraint \textbf{C2}).
+%%
+\item[{[P3]}] When belief \texttt{student(X)} is asserted it must be
+immediately removed if also \texttt{graduate(X)} is present in the KB
+(constraints \textbf{C1} and \textbf{C3}).
+%%
+\end{description}
+%%
+
+%%
+\begin{figure}[b!]
+\python%%
+\begin{lstlisting}
+from profeta.lib  import *
+from profeta.main import *
+
+# the Beliefs
+class student(Belief): pass
+class graduated(Belief): pass
+
+PROFETA.start()
+
++graduated("X") / student("X") >> \
+    [ -student("X"),
+      show_line("congratulations", "X", "is now graduated") ]
++graduated("X") >> \
+    [ -graduated("X"),
+      show_line("cannot graduate", "X", "; it is not a student") ]
++student("X") / graduated("X") >> \
+    [ -student("X"),
+      show_line("X", "is graduated and cannot become a student") ]
+
+PROFETA.run_shell(globals())
+\end{lstlisting}
+\caption{The ``graduating students'' program}\label{fig:student}
+\end{figure}
+%%
+%%
+
+%%
+The listing of the PROFETA program \texttt{student.py}, behaving as
+described, is reported in Figure~\ref{fig:student}.
+%%
+Here, we can see how conditions (also together with variable unification)
+can be used in PROFETA\footnote{The \texttt{``\textbackslash''} is used
+in Python to break lines of an expression as in the listing.}.
+%%
+
+%%
+Lines 10--12 represents the plan \textbf{P1}: it is triggered by the
+assertion of \texttt{graduated(X)} but only if also \texttt{student(X)} is
+present in the knowledge base; as a consequence, the latter belief is
+removed and a proper message is displayed.
+%%
+
+%%
+When a \texttt{graduated(X)} belief is asserted, if the condition of the
+previous plan is false (the \texttt{student(X)} belief is not asserted),
+the PROFETA engine analyses the next plan (lines
+13--14) and executes it; this corresponds to \textbf{P2} whose action
+is the removal of \texttt{graduated(X)} since it would be inconsistent.
+%%
+
+%%
+The last plan (lines 16--18, corresponding to \textbf{P3}) is triggered
+when belief \texttt{student(X)} is asserted by the student is already
+graduated: also in this case there is a consistency violation and, as a
+result, the asserted belief must be removed.
+%%
+
+%%
+An sample run of the program shown can be seen in the following window:
+%%
+\shellsnap{%
+\$ \underline{python students.py}\\
+PROFETA>\underline{+student("corrado")}\\
+PROFETA>\underline{+student("alice")}\\
+PROFETA>\underline{+graduated("john")}\\
+PROFETA>cannot graduate john , it is not a student\\
+\underline{+student("john")}\\
+PROFETA>\underline{kb}\\
+{[student('corrado'), student('alice'), student('john')]}\\
+PROFETA>\underline{+graduated("alice")}\\
+PROFETA>congratulations alice is now graduated\\
+\underline{kb}\\
+{[student('corrado'), student('john'), graduated('alice')]}\\
+PROFETA>\underline{+student("alice")}\\
+PROFETA>alice is graduated and cannot become a student again\\
+PROFETA>}
+%%
+
+
