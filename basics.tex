@@ -37,7 +37,7 @@ user.
 \section{PROFETA Phylosophy: Belief-Desire-Intention}
 %%
 PROFETA is a tool designed to write autonomous systems (\emph{agents} or
-\emph{robots}) exploiting on an
+\emph{robots}) exploiting an
 agent-based paradigm called
 \emph{Belief-Desire-Intention (BDI)}~\cite{rao1995bdi} and inspired to a
 kernel language called AgentSpeak(L)~\cite{AgentSpeak}.
@@ -63,12 +63,12 @@ knowledge eventually derived by the system.
 in other words, the ``things to do'' to achieve its \emph{goals}.
 %%
 Desires are expressed as \emph{plans} (i.e.~once again
-``things to do'') which can be selected for execution following the
+``things to do'') which can be selected for execution, following the
 occurrence of certain
 events in the environment and provided that the system has a specific
 knowledge.
 %%
-From the computer programming point of view, plans of a BDI system
+From the programming point of view, plans of a BDI system
 represents the \emph{program} to be executed.
 %%
 
@@ -81,22 +81,22 @@ Intentions are indeed considered as \emph{run-time instantiation} of plans.
 %%
 
 %%
-BDI systems are usually controlled by a virtual machine executing a loop
+BDI systems are usually controlled by an abstract machine executing a loop
 which performs the following operations:
 %%
 \begin{itemize}
 %%
 \item Sample the environment and update the knowledge base with the new
-  \emph{beliefs}
+  \emph{beliefs};
 %%
 \item Identify the \emph{plans} (\emph{desires})
-  that, on the basis of the current system status, can be selected for
-  execution
+  that, on the basis of the current sets of beliefs, can be selected for
+  execution;
 %%
 \item Selected plans become \emph{intentions} and they can be scheduled for
-  execution
+  execution;
 %%
-\item Intentions are finally executed
+\item Intentions are finally executed.
 %%
 \end{itemize}
 %%
@@ -105,14 +105,15 @@ which performs the following operations:
 %%
 \section{PROFETA Installation}
 %%
-The PROFETA tool is entirely written in Python\footnote{PROFETA does not
-  support Python3}  and thus depends only on it,
-no additional package or library is needed.
+The PROFETA tool is entirely written in Python (version 2)  and thus
+depends only on it\footnote{PROFETA does not
+  support Python3},
+no additional package or library are needed.
 %%
 It can be downloaded from \texttt{github} using the
 \texttt{git clone} command.
 %%
-To this aim, the git tool must be installed in your system.
+To this aim, the \texttt{git} tool must be installed in your system.
 %%
 
 %%
@@ -120,7 +121,7 @@ After typing:
 %%
 \shellsnap{\$ \underline{git clone http://github.com/corradosantoro/profeta}}
 %%
-a folder \texttt{profeta} will appear in your current directory.
+a folder \texttt{``profeta''} will appear in your current directory.
 %%
 In order to install the tool just type:
 %%
@@ -145,6 +146,8 @@ provides some commands to manipulate the knowledge base, to execute a
 goal, etc.
 %%
 The details of its usage will be given in Chapter~\ref{xxxx}.
+%%
+
 %%
 To test sample program, just type \texttt{+fact(10)} and the system will
 give the answer by
@@ -211,12 +214,12 @@ Belief declaration is done by simply \emph{subclassing} the basic
 Line 7 starts the PROFETA engine; this statement is needed before
 the PROFETA program appears.
 %%
+
 %%
 Line 10 reports the ``real'' PROFETA program: in particular, the line
 expresses that ``when the belief \texttt{say("hi")} is asserted, the
 message \texttt{'Hello world' from PROFETA} is printed on the console.
 %%
-
 %%
 Line 10 is a \textbf{reactive plan}: \texttt{say("hi")} is a \emph{belief
   pattern}, while the symbol ``\texttt{+}'' completes the pattern by
@@ -225,7 +228,7 @@ specifying ``addition'', that is, belief assertion.
 Symbol ``\verb+>>+'' plays the role of ``implies'' and its right-hand side
 is a \emph{list of actions} to be executed following that assertion; in our
 case, the list is composed of a single (library) action which is the output
-a message.
+of the message.
 %%
 %%
 Finally, line 12 starts the PROFETA Shell so that we can manually trigger
@@ -249,12 +252,13 @@ PROFETA>'Hello world' from PROFETA\\
 %%
 \section{Playing with Beliefs and the Knowledge Base}
 %%
-In the previous Section, we used the shell command \texttt{+say("hi")} to
+In the previous Section, we used the PROFETA shell command
+\texttt{+say("hi")} to
 trigger a plan.
 %%
 Indeed, plan triggering is a \emph{secondary effect} of that command since
-basically it \textbf{adds} belief \texttt{say("hi")} to the knowledge base;
-this effect can be observed by using the shell command \texttt{kb} which
+basically it \textbf{adds} the belief \texttt{say("hi")} to the knowledge base;
+this behaviour can be observed by using the shell command \texttt{kb} which
 prints out the content of the knowledge base:
 %%
 \shellsnap{%%
@@ -415,12 +419,12 @@ is that now \emph{any parameter} given when asserting belief \texttt{say()}
 is able to trigger the plan; moreover, that parameter is also printed in the
 message shown by the plan itself.
 %%
-This is achieved by using a \emph{free variable}, \texttt{X}, which is
+This is achieved by using a \emph{variable}, \texttt{X}, which is
 bound to the value present in belief assertion and then used also in the
 printed message.
 %%
-The example shows how to use variables in PROFETA plans: as in a typical
-Prolog style, \emph{any string parameter starting with an uppercase letter}
+The example shows how to use variables in PROFETA plans: as in a
+Prolog-like style, \emph{any string parameter starting with an uppercase letter}
 is treated as \emph{variable} and used according to the styles of logic
 programming.
 %%
@@ -474,8 +478,8 @@ Obviously, these two beliefs obey to two main constraint:
 %%
 \item[{[C2]}] Before being graduated, a person must have been a student;
 %%
-\item[{[C3]}] A graduated person cannot become again a student\footnote{Unless a
-  different faculty is chosen, but we don't consider here such a case.}.
+\item[{[C3]}] A graduated person cannot become again a student (ynless a
+  different faculty is chosen, but we don't consider here such a case).
 %%
 \end{description}
 %%
