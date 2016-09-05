@@ -592,6 +592,165 @@ PROFETA>}
 
 
 %%
+\section{More Complex Conditions}
+%%
+We have learned how to add conditions on the basis of the presence of
+certain beliefs in the KB, however conditions can be also used to test the
+value of the variables used in the plan: this is achieved by using Python
+\emph{lambda expressions} that evaluate to a boolean value.
+%%
+In order to understand this, let us implement a specific example program:
+the \emph{Sieve of Eratosthenes}.
+%%
+Prime numbers generation is one of the most widely used examples in
+explaining or presenting the features of a programming language and, on
+this basis, different implementation philosophies are proposed.
+%%
+In our PROFETA implementation we will use the following schema.
+%%
+\begin{enumerate}
+%%
+\item Let first generate all numbers from 2 to 100;
+%%
+\item Then, find all possible pairs $(X,Y)$ and ``drop'' $X$ if it is a
+  multiple of $Y$;
+%%
+\item When no more ``drops'' are possible, the remaining numbers are
+  \emph{prime}.
+%%
+\end{enumerate}
+%%
+
+%%
+Step 1, in classical imperative programming languages, is often made with
+``loops''; when the declarative semantics is used, as in PROFETA, the
+recursive approach is always needed.
+%%
+In our case, we model a number $X$ with the belief \texttt{number(X)} and,
+to generate all numbers, we write the plans depicted below:
+%%
+\python%%
+\begin{lstlisting}
++number("X") / (lambda : X < 100) >> [ "X = X + 1", +number("X") ]
++number("X") >> [ show_line("end of number generation") ]
+\end{lstlisting}
+%%
+Plan in line 1 shows two new concepts of PROFETA: \emph{(i)} how to add
+conditions on variables; and \emph{(ii)} how to use expressions to modify
+variable values.
+%%
+Condition in line 1 is specified as a Python lambda function which has
+\emph{no parameters} and returns a boolean value; therefore that plan is
+executed as soon as the added belief \texttt{number()} has the parameter
+value less than 100: if this is the case, the expression \texttt{"X = X +
+  1"} is executed, which increments the parameter, and a new
+\texttt{number()} belief is asserted.
+%%
+However, when the parameter reaches 100, plan in line 1 is no more
+triggered and plan in line 2 can be executed thus showing a message.
+%%
+
+%%
+These two plans implement the loop needed to generate our numbers which
+is started by (manually) asserting belief\footnote{Yes, the number 1 is
+  not present in the set of the Sieve of Eratosthenes, but we use it to
+  trigger our program.} \texttt{number(1)}: indeed,
+if we run the example with these two plans, it will behave as follows:
+%%
+\shellsnap{%
+...\\
+PROFETA>\underline{+number(1)}\\
+PROFETA>end of number generation\\
+\underline{kb}\\
+{[number(1), number(2), number(3), number(4), number(5), number(6), number(7),\\
+number(8), number(9), number(10), number(11), number(12), number(13), \\
+number(14),number(15), number(16), number(17), number(18), number(19), \\
+...\\
+number(95), number(96), number(97), number(98), number(99), number(100)]}\\
+PROFETA>}
+%%
+
+%%
+It's now to time to execute step 2 of the Sieve; here the game is played
+almost totally in the condition part of a plan: we must retrieve two
+numbers, assure that they are \textbf{different}, and check if one is
+multiple of the other one; if this is the case, the multiple must be
+\textbf{removed} from the KB; the removal action can be also used to
+\emph{retrigger} the process, thus implementing (once again) a
+recursion-based loop.
+%%
+The plans that behave as explained are the following:
+%%
+\python%%
+\begin{lstlisting}
+-number("_") / (number("X") & number("Y") & \
+               (lambda : X != Y) & \
+               (lambda : (X % Y) == 0) ) \
+               >> [ -number("X") ]
+-number("_") >> [ show_line("prime numbers detected") ]
+\end{lstlisting}
+%%
+The first thing to notice is the use of the special symbol \texttt{"\_"},
+which, according to the Prolog syntax, means ``don't care'', i.e.~any
+parameter value.
+%%
+Then the plan in lines 1--4 can be read as follows: when any
+\texttt{number()} belief is removed, \emph{(i)} retrieve two other \texttt{number()}
+beliefs---\verb+number("X") & number("Y")+; \emph{(ii)} check that the
+numbers are different---\verb+(lambda : X != Y)+; \emph{(iii)} check if
+\texttt{X} is a multiple of \texttt{Y}---\verb+(lambda : (X % Y) == 0)+;
+then \emph{(iv)} remove \texttt{number(X)} since it is not prime; such a
+removal retriggers the plan recursively.
+%%
+If the condition is false, all numbers are prime, so the plan in line 5 can
+be executed showing the message.
+%%
+
+%%
+The complete listing of the program is reported in Figure~\ref{fig:sieve}.
+%%
+There you can see the role of the belief \texttt{number(1)}, whose removal
+is used to link the generation of numbers with prime number detection.
+%%
+Running the example is simple; it suffices to assert
+\texttt{number(1)} in the PROFETA shell: when the termination message
+appears, the knowledge-base will contain only prime numbers.
+%%
+
+%%
+\begin{figure}[b!]
+\python%%
+\begin{lstlisting}
+from profeta.lib  import *
+from profeta.main import *
+
+
+class number(Belief):
+    pass
+
+PROFETA.start()
+
++number("N") / (lambda : N < 100) >> [ "N = N + 1", +number("N") ]
++number("_") >> [ show_line("end of sequence generation"),
+                  -number(1) ]
+
+-number("_") / (number("X") & \
+                number("Y") & \
+                (lambda : X != Y) & \
+                (lambda : (X % Y) == 0) ) >> [ -number("X") ]
+-number("_") >> [ show_line("prime numbers detected") ]
+
+PROFETA.run_shell(globals())
+\end{lstlisting}
+\caption{The Sieve of Eratosthenes}\label{fig:sieve}
+\end{figure}
+%%
+%%
+
+
+
+
+%%
 \section{Summary}
 %%
 In this Chapter, we have started to learn how to use PROFETA.
@@ -603,8 +762,9 @@ we have learned how to use beliefs, in terms of their definition and
 manipulation, and how beliefs can be exploited to perform reasoning by
 means of reactive plans.
 %%
-The basic structure of a PROFETA program and its building blocks are thus
-introduced.
+The basic structure of a PROFETA program and its building blocks are then
+introduced in order to let the reader to understand how to practically use
+the tool and write simple programs.
 %%
 
 
